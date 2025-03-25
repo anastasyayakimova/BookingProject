@@ -2,6 +2,9 @@ import requests
 import os
 from dotenv import load_dotenv
 from core.setting.environments import Environment
+from core.clients.endpoints import Endpoints
+from core.setting.config import Users, Timeouts
+import allure
 
 load_dotenv()
 
@@ -15,7 +18,8 @@ class APIClient:
             raise ValueError(f'Unsupported environment value: {environment_str}')
 
         self.base_url = self.get_base_url(environment)
-        self.headers = {
+        self.session = requests.Session()
+        self.session.headers = {
             "Content-Type": 'application/json'
         }
 
@@ -40,3 +44,24 @@ class APIClient:
         if status_code:
             assert response.status_code == status_code
         return response.json()
+
+    def ping(self):
+        with allure.step("Ping api client"):
+            url = f'{self.base_url}{Endpoints.PING_ENDPOINT}'
+            response = self.session.get(url)
+            response.raise_for_status()
+        with allure.step("Assert status code"):
+            assert response.status_code == 201, f'Ожидали 201, но получили {response.status_code}'
+        return response.status_code
+
+    def auth(self):
+        with allure.step("Получить аутентификацию"):
+            url = f'{self.base_url}{Endpoints.AUTH_ENDPOINT}'
+            payload = {"username": Users.USERNAME, "password": Users.PASSWORD}
+            response = self.session.post(url, json=payload, timeout=Timeouts.TIMEOUT)
+            response.raise_for_status()
+        with allure.step("Assert status code"):
+            assert response.status_code == 200, f'Ожидали 201, но получили {response.status_code}'
+        token = response.json().get("token")
+        with allure.step("Обновление хэдера с записью об авторизации"):
+            self.session.headers.update({"Authorization": f"Bearer{token}"})
