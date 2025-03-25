@@ -65,3 +65,29 @@ class APIClient:
         token = response.json().get("token")
         with allure.step("Обновление хэдера с записью об авторизации"):
             self.session.headers.update({"Authorization": f"Bearer{token}"})
+
+    def get_booking_ids_endpoint(self, firstname=None, lastname=None, checkin=None, checkout=None):
+        with allure.step("Отправка запроса на получение BokindIds"):
+            url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT}'
+            params = {
+                "firstname": firstname,
+                "lastname": lastname,
+                "checkin": checkin,
+                "checkout": checkout
+            }
+            params = {k: v for k, v in params.items() if v is not None}
+            response = self.session.get(url, params=params)
+            response.raise_for_status()
+        with allure.step("Assert status code"):
+            assert response.status_code == 200, f'Ожидали 200, но получили {response.status_code}'
+        return response.json()
+
+
+    def get_booking_for_id(self, id):
+        with allure.step("Отправка запроса на получние booking по id"):
+            url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT}/{id}'
+            response = self.session.get(url)
+            response.raise_for_status()
+        with allure.step("Assert status code"):
+            assert response.status_code == 200, f'Ожидали 200, но получили {response.status_code}'
+        return response.json()
