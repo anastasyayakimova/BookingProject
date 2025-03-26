@@ -46,11 +46,11 @@ class APIClient:
         return response.json()
 
     def ping(self):
-        with allure.step("Ping api client"):
+        with allure.step("Пинг"):
             url = f'{self.base_url}{Endpoints.PING_ENDPOINT}'
             response = self.session.get(url)
             response.raise_for_status()
-        with allure.step("Assert status code"):
+        with allure.step("Проверка статус кода"):
             assert response.status_code == 201, f'Ожидали 201, но получили {response.status_code}'
         return response.status_code
 
@@ -60,25 +60,18 @@ class APIClient:
             payload = {"username": Users.USERNAME, "password": Users.PASSWORD}
             response = self.session.post(url, json=payload, timeout=Timeouts.TIMEOUT)
             response.raise_for_status()
-        with allure.step("Assert status code"):
+        with allure.step("Проверка статус кода"):
             assert response.status_code == 200, f'Ожидали 201, но получили {response.status_code}'
         token = response.json().get("token")
         with allure.step("Обновление хэдера с записью об авторизации"):
             self.session.headers.update({"Authorization": f"Bearer{token}"})
 
-    def get_booking_ids_endpoint(self, firstname=None, lastname=None, checkin=None, checkout=None):
+    def get_booking_ids_endpoint(self, params=None):
         with allure.step("Отправка запроса на получение BokindIds"):
             url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT}'
-            params = {
-                "firstname": firstname,
-                "lastname": lastname,
-                "checkin": checkin,
-                "checkout": checkout
-            }
-            params = {k: v for k, v in params.items() if v is not None}
             response = self.session.get(url, params=params)
             response.raise_for_status()
-        with allure.step("Assert status code"):
+        with allure.step("Проверка статус кода"):
             assert response.status_code == 200, f'Ожидали 200, но получили {response.status_code}'
         return response.json()
 
@@ -88,6 +81,6 @@ class APIClient:
             url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT}/{id}'
             response = self.session.get(url)
             response.raise_for_status()
-        with allure.step("Assert status code"):
+        with allure.step("Проверка статус кода"):
             assert response.status_code == 200, f'Ожидали 200, но получили {response.status_code}'
         return response.json()
