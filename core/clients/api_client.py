@@ -41,14 +41,14 @@ class APIClient:
 
     def post(self, endpoint, data=None, status_code=200):
         url = self.base_url + endpoint
-        response = requests.get(url, headers=self.headers, json=data)
+        response = requests.post(url, headers=self.headers, json=data)
         if status_code:
             assert response.status_code == status_code
         return response.json()
 
     def ping(self):
         with allure.step("Пинг"):
-            url = f'{self.base_url}{Endpoints.PING_ENDPOINT}'
+            url = f'{self.base_url}{Endpoints.PING_ENDPOINT.value}'
             response = self.session.get(url)
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
@@ -57,7 +57,7 @@ class APIClient:
 
     def auth(self):
         with allure.step("Получить аутентификацию"):
-            url = f'{self.base_url}{Endpoints.AUTH_ENDPOINT}'
+            url = f'{self.base_url}{Endpoints.AUTH_ENDPOINT.value}'
             payload = {"username": Users.USERNAME, "password": Users.PASSWORD}
             response = self.session.post(url, json=payload, timeout=Timeouts.TIMEOUT)
             response.raise_for_status()
@@ -69,7 +69,7 @@ class APIClient:
 
     def get_booking_ids_endpoint(self, params=None):
         with allure.step("Отправка запроса на получение BokindIds"):
-            url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT}'
+            url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT.value}'
             response = self.session.get(url, params=params)
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
@@ -79,7 +79,7 @@ class APIClient:
 
     def get_booking_for_id(self, id):
         with allure.step("Отправка запроса на получние booking по id"):
-            url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT}/{id}'
+            url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT.value}/{id}'
             response = self.session.get(url)
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
@@ -88,7 +88,7 @@ class APIClient:
 
     def delete_booking(self, booking_id):
         with allure.step("Удаление"):
-            url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT}/{booking_id}'
+            url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT.value}/{booking_id}'
             response = self.session.delete(url, auth=HTTPBasicAuth(Users.USERNAME, Users.PASSWORD))
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
@@ -97,7 +97,7 @@ class APIClient:
 
     def create_booking(self, booking_data):
         with allure.step("Создание"):
-            url = f"{self.base_url}{Endpoints.BOOKING_ENDPOINT}"
+            url = f"{self.base_url}{Endpoints.BOOKING_ENDPOINT.value}"
             response = self.session.post(url, json=booking_data)
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
@@ -107,7 +107,7 @@ class APIClient:
 
     def update_booking(self, booking_id, booking_data):
         with allure.step("Редактирование"):
-            url = f"{self.base_url}{Endpoints.BOOKING_ENDPOINT}/{booking_id}"
+            url = f"{self.base_url}{Endpoints.BOOKING_ENDPOINT.value}/{booking_id}"
             response = self.session.put(url, json=booking_data, auth=HTTPBasicAuth(Users.USERNAME, Users.PASSWORD))
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
@@ -116,7 +116,7 @@ class APIClient:
 
     def partial_update_booking(self, booking_id, booking_data):
         with allure.step("Частичное редактирование"):
-            url = f"{self.base_url}{Endpoints.BOOKING_ENDPOINT}/{booking_id}"
+            url = f"{self.base_url}{Endpoints.BOOKING_ENDPOINT.value}/{booking_id}"
             response = self.session.patch(url, json=booking_data, auth=HTTPBasicAuth(Users.USERNAME, Users.PASSWORD))
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
