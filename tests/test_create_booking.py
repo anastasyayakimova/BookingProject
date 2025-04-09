@@ -78,7 +78,6 @@ def test_create_booking_with_custom_data_without_additionalneeds(api_client):
 
 @allure.feature("Тест создания")
 @allure.story('Неуспешное создание без обязательного поля firstname')
-@pytest.mark.xfail(reason='Ожидаю, что упадет, так как не все обязательные поля')
 def test_create_booking_without_firstname(api_client):
     booking_data = {
         "lastname": "Brown",
@@ -90,8 +89,79 @@ def test_create_booking_without_firstname(api_client):
         },
         "additionalneeds": "Breakfast"
     }
-    response = api_client.create_booking(booking_data) #как здесь правильно обрабатывать то, что код придет не 200. И то что я ожидаю, что упадет?
+    with pytest.raises(HTTPError) as exc_info:
+        api_client.create_booking(booking_data)
+
+    assert exc_info.value.response.status_code == 500
 
 
+@allure.feature("Тест создания")
+@allure.story('Неуспешное создание без обязательного поля lastname')
+def test_create_booking_without_lastname(api_client):
+    booking_data = {
+        "firstname": "Jim",
+        "totalprice": 111,
+        "depositpaid": True,
+        "bookingdates": {
+            "checkin": "2018-01-01",
+            "checkout": "2019-01-01"
+        }
+    }
+    with pytest.raises(HTTPError) as exc_info:
+        api_client.create_booking(booking_data)
 
+    assert exc_info.value.response.status_code == 500
+
+
+@allure.feature("Тест создания")
+@allure.story('Неуспешное создание без обязательного поля totalprice')
+def test_create_booking_without_totalprice(api_client):
+    booking_data = {
+        "firstname": "Jim",
+        "lastname": "Brown",
+        "depositpaid": True,
+        "bookingdates": {
+            "checkin": "2018-01-01",
+            "checkout": "2019-01-01"
+        },
+        "additionalneeds": "Breakfast"
+    }
+    with pytest.raises(HTTPError) as exc_info:
+        api_client.create_booking(booking_data)
+
+    assert exc_info.value.response.status_code == 500
+
+
+@allure.feature("Тест создания")
+@allure.story('Неуспешное создание без обязательного поля bookingdates')
+def test_create_booking_without_bookingdates(api_client):
+    booking_data = {
+        "firstname": "Jim",
+        "lastname": "Brown",
+        "totalprice": 111,
+        "depositpaid": True,
+        "additionalneeds": "Breakfast"
+    }
+    with pytest.raises(HTTPError) as exc_info:
+        api_client.create_booking(booking_data)
+
+    assert exc_info.value.response.status_code == 500
+
+@allure.feature("Тест создания")
+@allure.story('Неуспешное создание без обязательного поля depositpaid')
+def test_create_booking_without_depositpaid(api_client):
+    booking_data = {
+        "firstname": "Jim",
+        "lastname": "Brown",
+        "totalprice": 111,
+        "bookingdates": {
+            "checkin": "2018-01-01",
+            "checkout": "2019-01-01"
+        },
+        "additionalneeds": "Breakfast"
+    }
+    with pytest.raises(HTTPError) as exc_info:
+        api_client.create_booking(booking_data)
+
+    assert exc_info.value.response.status_code == 500
 
