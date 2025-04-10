@@ -20,9 +20,6 @@ class APIClient:
 
         self.base_url = self.get_base_url(environment)
         self.session = requests.Session()
-        self.session.headers = {
-            "Content-Type": 'application/json'
-        }
 
     def get_base_url(self, environment: Environment) -> str:
         if environment == Environment.TEST:
@@ -58,8 +55,8 @@ class APIClient:
     def auth(self):
         with allure.step("Получить аутентификацию"):
             url = f'{self.base_url}{Endpoints.AUTH_ENDPOINT.value}'
-            payload = {"username": Users.USERNAME, "password": Users.PASSWORD}
-            response = self.session.post(url, json=payload, timeout=Timeouts.TIMEOUT)
+            payload = {"username": Users.USERNAME.value, "password": Users.PASSWORD.value}
+            response = self.session.post(url, json=payload, timeout=Timeouts.TIMEOUT.value)
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
             assert response.status_code == 200, f'Ожидали 201, но получили {response.status_code}'
