@@ -86,11 +86,10 @@ class APIClient:
     def delete_booking(self, booking_id):
         with allure.step("Удаление"):
             url = f'{self.base_url}{Endpoints.BOOKING_ENDPOINT.value}/{booking_id}'
-            response = self.session.delete(url, auth=HTTPBasicAuth(Users.USERNAME, Users.PASSWORD))
+            response = self.session.delete(url, auth=HTTPBasicAuth(Users.USERNAME.value, Users.PASSWORD.value))
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
-            assert response.status_code == 200, f'Ожидали 200, но получили {response.status_code}'
-        return response.json()
+            assert response.status_code == 201, f'Ожидали 200, но получили {response.status_code}'
 
     def create_booking(self, booking_data):
         with allure.step("Создание"):
@@ -105,7 +104,7 @@ class APIClient:
     def update_booking(self, booking_id, booking_data):
         with allure.step("Редактирование"):
             url = f"{self.base_url}{Endpoints.BOOKING_ENDPOINT.value}/{booking_id}"
-            response = self.session.put(url, json=booking_data, auth=HTTPBasicAuth(Users.USERNAME, Users.PASSWORD))
+            response = self.session.put(url, json=booking_data, auth=HTTPBasicAuth(Users.USERNAME.value, Users.PASSWORD.value))
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
             assert response.status_code == 200, f'Ожидали 200, но получили {response.status_code}'
@@ -114,7 +113,7 @@ class APIClient:
     def partial_update_booking(self, booking_id, booking_data):
         with allure.step("Частичное редактирование"):
             url = f"{self.base_url}{Endpoints.BOOKING_ENDPOINT.value}/{booking_id}"
-            response = self.session.patch(url, json=booking_data, auth=HTTPBasicAuth(Users.USERNAME, Users.PASSWORD))
+            response = self.session.patch(url, json=booking_data, auth=HTTPBasicAuth(Users.USERNAME.value, Users.PASSWORD.value))
             response.raise_for_status()
         with allure.step("Проверка статус кода"):
             assert response.status_code == 200, f'Ожидали 200, но получили {response.status_code}'
