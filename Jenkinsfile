@@ -13,7 +13,7 @@ pipline{
 
         stage('Run Tests'){
               steps{
-                  sh 'python -m pytest --alluredir allure-results'
+                  sh 'python3 -m pytest --alluredir allure-results'
               }
         }
 
