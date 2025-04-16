@@ -37,3 +37,10 @@ def generate_random_booking_date(booking_dates):
         "additionalneeds": additionalneeds
     }
     return data
+
+@pytest.fixture()
+def create_random_booking(generate_random_booking_date, api_client):
+    response_json = api_client.create_booking(generate_random_booking_date)
+    id = response_json['bookingid']
+    yield id
+    api_client.delete_booking(id)
